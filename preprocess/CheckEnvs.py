@@ -81,12 +81,6 @@ def check_contig_in_bam(bam_fn, sorted_contig_list, samtools):
             continue
         if int(mapped_reads) > 0:
             contig_with_read_support_set.add(contig_name)
-    bai_process.wait()
-    # Fail loudly if samtools could not read the BAM/CRAM (e.g. CRAM decode error),
-    # instead of silently proceeding with an empty contig list and exiting 0.
-    if bai_process.returncode != 0:
-        print("[ERROR] samtools idxstats failed (BAM/CRAM read error), exit code {}".format(bai_process.returncode), file=sys.stderr)
-        sys.exit(1)
     for contig_name in sorted_contig_list:
         if contig_name not in contig_with_read_support_set:
             print(log_warning(
@@ -105,7 +99,7 @@ def check_contig_in_bam(bam_fn, sorted_contig_list, samtools):
 def split_extend_vcf(vcf_fn, output_fn):
     expand_region_size = param.no_of_positions
     output_ctg_dict = defaultdict(list)
-    unzip_process = subprocess_popen(shlex.split("pigz -fdc -p 2 %s" % (vcf_fn)))
+    unzip_process = subprocess_popen(shlex.split("gzip -fdc %s" % (vcf_fn)))
 
     for row_id, row in enumerate(unzip_process.stdout):
         if row[0] == '#':
@@ -142,7 +136,7 @@ def split_extend_vcf(vcf_fn, output_fn):
 def split_extend_bed(bed_fn, output_fn, contig_set=None):
     expand_region_size = param.no_of_positions
     output_ctg_dict = defaultdict(list)
-    unzip_process = subprocess_popen(shlex.split("pigz -fdc -p 2 %s" % (bed_fn)))
+    unzip_process = subprocess_popen(shlex.split("gzip -fdc %s" % (bed_fn)))
     for row_id, row in enumerate(unzip_process.stdout):
         if row[0] == '#':
             continue
@@ -345,12 +339,6 @@ def CheckEnvs(args):
         sorted_contig_list, found_contig = check_contig_in_bam(bam_fn=bam_fn, sorted_contig_list=sorted_contig_list,
                                                                samtools=samtools)
 
-        # --gender female: drop chrY/Y from the contig list (both 'chr'-prefixed and bare forms).
-        # The explicit --ctg_name=chrY contradiction is already rejected in run_clair3.py;
-        # here we silently remove chrY that came from the default whitelist / --include_all_ctgs.
-        if args.gender == 'female':
-            sorted_contig_list = [c for c in sorted_contig_list if c not in ('chrY', 'Y')]
-
     if not found_contig:
         # output header only to merge_output.vcf.gz
         output_fn = os.path.join(output_fn_prefix, "merge_output.vcf")
@@ -412,12 +400,6 @@ def main():
 
     parser.add_argument('--ctg_name', type=str, default='EMPTY',
                         help="The name of sequence to be processed, separated by comma")
-
-    # Gender-aware calling (issue #66). Only used here to remove chrY/Y for 'female';
-    # 'male' haploid is applied later in MergeVcf/SortVcf, not in this module.
-    parser.add_argument('--gender', type=str, default='unknown',
-                        choices=['unknown', 'male', 'female'],
-                        help="Sample gender. 'female' removes chrY from the contig list. default: unknown")
 
     parser.add_argument('--bed_fn', type=str, nargs='?', action="store", default=None,
                         help="Call variant only in these regions. Will take an intersection if --ctg_name is set")
