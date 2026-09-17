@@ -1,17 +1,18 @@
+<!-- Modifications Copyright (C) 2026 Advanced Micro Devices, Inc. All rights reserved. -->
 <div align="center">
-  <a href="https://en.wiktionary.org/wiki/%E7%9C%BC" target="_blank">
-    <img src="docs/images/clair3_logo.png" width="110" height="90" alt="Clair3">
-  </a>
+ <a href="https://en.wiktionary.org/wiki/%E7%9C%BC" target="_blank">
+ <img src="docs/images/clair3_logo.png" width="110" height="90" alt="Clair3">
+ </a>
 
-  <h1>Clair3</h1>
+ <h1>Clair3</h1>
 
-  <p><b>Symphonizing pileup and full-alignment for deep-learning-based long-read variant calling</b></p>
+ <p><b>Symphonizing pileup and full-alignment for deep-learning-based long-read variant calling</b></p>
 
-  <p>
-    <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" alt="License"></a>
-    <a href="http://bioconda.github.io/recipes/clair3/README.html"><img src="https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat" alt="install with bioconda"></a>
-    <a href="https://hub.docker.com/r/hkubal/clair3"><img src="https://img.shields.io/badge/docker-hkubal%2Fclair3-blue.svg" alt="Docker"></a>
-  </p>
+ <p>
+ <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" alt="License"></a>
+ <a href="http://bioconda.github.io/recipes/clair3/README.html"><img src="https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat" alt="install with bioconda"></a>
+ <a href="https://hub.docker.com/r/hkubal/clair3"><img src="https://img.shields.io/badge/docker-hkubal%2Fclair3-blue.svg" alt="Docker"></a>
+ </p>
 </div>
 
 ---
@@ -59,17 +60,6 @@ Clair3 is the 3rd generation of [Clair](https://github.com/HKU-BAL/Clair) (2nd) 
 ---
 
 ## Latest Updates
-### v2.0.3 — *Sep 3, 2026*
-- Adds a `--gender` option so that variant calling handles the sex chromosomes (chrX/chrY) with the correct ploidy. For details on X,Y support, please see ([gender_option](https://github.com/HKU-BAL/Clair3/blob/main/docs/gender_option.md)).
-- Replaces shell calls to `gzip` with `pigz`, which is already an explicit dependency, so decompression/compression no longer fails in minimal environments where `gzip` is missing ([Issue#455](https://github.com/HKU-BAL/Clair3/issues/455)).
-- Returns a non-zero exit code when BAM/CRAM input cannot be decoded (e.g., a CRAM decode error) instead of silently emitting an empty VCF with exit code 0 ([Issue#453](https://github.com/HKU-BAL/Clair3/issues/453)).
-
-### v2.0.2 — *Jun 25, 2026*
-
-- Always emit a valid, indexed VCF/gVCF when no variants are found ([Issue#447](https://github.com/HKU-BAL/Clair3/issues/447)).
-- Fail early with clear guidance, instead of crashing, when a move-table `*_with_mv` model is run without `--enable_dwell_time` ([Issue#437](https://github.com/HKU-BAL/Clair3/issues/437)).
-- Use the longphase conda package on all platforms (longphase now supports linux-aarch64) instead of compiling it at build time ([PR#64876](https://github.com/bioconda/bioconda-recipes/pull/64876)). 
-- Re-bundle pre-trained models (single pre-packaged archive extracted to \${PREFIX}/bin/models/), restoring bundled models removed since v2.0.0 ([Issue#446](https://github.com/HKU-BAL/Clair3/issues/446)). 
 
 ### v2.0.1 — *Apr 27, 2026*
 
@@ -89,18 +79,24 @@ A preprint describing the performance of Clair3 v2 is available on [bioRxiv](htt
 
 ### v1.2.0 — *Aug 1, 2025*
 
-Native GPU support on Linux and Apple Silicon. Clair3 on GPU runs **~5× faster than CPU**. See the [GPU Quick Start](docs/gpu_quick_start.md).
+Native GPU support on Linux (NVIDIA CUDA and AMD Instinct ROCm) and Apple Silicon. Clair3 on GPU runs **~5× faster than CPU**. See the [GPU Quick Start](docs/gpu_quick_start.md).
 
 <div align="center">
-  <img src="docs/images/clair3_gpu_benchmark.png" width="400" alt="Clair3 GPU benchmark">
+ <img src="docs/images/clair3_gpu_benchmark.png" width="400" alt="Clair3 GPU benchmark">
 </div>
 
+### v1.1.2 — *Jul 10, 2025*
+
+- Boundary check for an insertion immediately followed by soft-clipping ([#394](https://github.com/HKU-BAL/Clair3/issues/394), @[dpryan79](https://github.com/dpryan79)).
+- Parallel-job exit-code checking; pipeline now exits immediately on any job failure ([#392](https://github.com/HKU-BAL/Clair3/issues/392), @[SamStudio8](https://github.com/SamStudio8)).
+
+### v1.1.1 — *May 19, 2025*
+
+- Fixed the malformed VCF header on AWS ([#380](https://github.com/HKU-BAL/Clair3/issues/380)).
+- Added an R10.4.1 model fine-tuned on 12 [bacterial genomes](https://elifesciences.org/reviewed-preprints/98300) ([notes](docs/fine-tuning_Clair3_with_12_bacteria_samples.pdf), @[wshropshire](https://github.com/wshropshire)).
+
 <details>
-<summary><b>Earlier versions</b> (v1.1.x and older — click to expand)</summary>
-
-**v1.1.2 — Jul 10, 2025.** Boundary check for an insertion immediately followed by soft-clipping ([#394](https://github.com/HKU-BAL/Clair3/issues/394), @[dpryan79](https://github.com/dpryan79)). Parallel-job exit-code checking; pipeline now exits immediately on any job failure ([#392](https://github.com/HKU-BAL/Clair3/issues/392), @[SamStudio8](https://github.com/SamStudio8)).
-
-**v1.1.1 — May 19, 2025.** Fixed the malformed VCF header on AWS ([#380](https://github.com/HKU-BAL/Clair3/issues/380)). Added an R10.4.1 model fine-tuned on 12 [bacterial genomes](https://elifesciences.org/reviewed-preprints/98300) ([notes](docs/fine-tuning_Clair3_with_12_bacteria_samples.pdf), @[wshropshire](https://github.com/wshropshire)).
+<summary><b>Earlier versions</b> (click to expand)</summary>
 
 **v1.1.0 — Apr 8, 2025.** Removed `parallel` version checking ([#377](https://github.com/HKU-BAL/Clair3/issues/377)).
 
@@ -167,6 +163,7 @@ Native GPU support on Linux and Apple Silicon. Clair3 on GPU runs **~5× faster 
 > **Pick the right install method for your hardware:**
 > - **CPU** → Docker (Option 1), Singularity (Option 2), or Bioconda (Option 3).
 > - **NVIDIA GPU (Linux)** → Docker GPU (Option 1) or Singularity GPU (Option 2); fall back to Step-by-step (Option 4) if unsupported.
+> - **AMD Instinct GPU (Linux, ROCm)** → build the ROCm GPU image from `Dockerfile.gpu`, or use Step-by-step (Option 4) with the ROCm PyTorch wheel. See the [GPU Quick Start](docs/gpu_quick_start.md#option-4-amd-instinct-rocm-on-linux).
 > - **Apple Silicon (M1/M2/M3/M4)** → Step-by-step (Option 4).
 >
 > See the [GPU Quick Start](docs/gpu_quick_start.md) for tuned settings.
@@ -180,29 +177,29 @@ Pre-built image: [hkubal/clair3](https://hub.docker.com/r/hkubal/clair3).
 #### CPU
 
 ```bash
-INPUT_DIR="[YOUR_INPUT_FOLDER]"        # e.g. /home/user1/input  (absolute path)
-OUTPUT_DIR="[YOUR_OUTPUT_FOLDER]"      # e.g. /home/user1/output (absolute path)
-THREADS="[MAXIMUM_THREADS]"            # e.g. 8
-MODEL_NAME="[YOUR_MODEL_NAME]"         # e.g. r1041_e82_400bps_sup_v500
+INPUT_DIR="[YOUR_INPUT_FOLDER]" # e.g. /home/user1/input (absolute path)
+OUTPUT_DIR="[YOUR_OUTPUT_FOLDER]" # e.g. /home/user1/output (absolute path)
+THREADS="[MAXIMUM_THREADS]" # e.g. 8
+MODEL_NAME="[YOUR_MODEL_NAME]" # e.g. r1041_e82_400bps_sup_v500
 
 docker run -it \
-  -v ${INPUT_DIR}:${INPUT_DIR} \
-  -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
-  hkubal/clair3:v2.0.2 \
-  /opt/bin/run_clair3.sh \
-    --bam_fn=${INPUT_DIR}/input.bam \
-    --ref_fn=${INPUT_DIR}/ref.fa \
-    --threads=${THREADS} \
-    --platform=ont \                       ## {ont,hifi,ilmn}
-    --model_path=/opt/models/${MODEL_NAME} \
-    --output=${OUTPUT_DIR}
+ -v ${INPUT_DIR}:${INPUT_DIR} \
+ -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
+ hkubal/clair3:v2.0.1 \
+ /opt/bin/run_clair3.sh \
+ --bam_fn=${INPUT_DIR}/input.bam \
+ --ref_fn=${INPUT_DIR}/ref.fa \
+ --threads=${THREADS} \
+ --platform=ont \ ## {ont,hifi,ilmn}
+ --model_path=/opt/models/${MODEL_NAME} \
+ --output=${OUTPUT_DIR}
 ```
 
 > `python3 /opt/bin/run_clair3.py` can replace `/opt/bin/run_clair3.sh` in the command above.
 
 #### GPU (NVIDIA CUDA on Linux)
 
-Image: `hkubal/clair3:v2.0.2_gpu` (built on CUDA 12.1).
+Image: `hkubal/clair3:v2.0.1_gpu` (built on CUDA 12.1).
 
 **Requirements**
 
@@ -211,22 +208,23 @@ Image: `hkubal/clair3:v2.0.2_gpu` (built on CUDA 12.1).
 
 ```bash
 docker run -it --gpus all \
-  -v ${INPUT_DIR}:${INPUT_DIR} \
-  -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
-  hkubal/clair3:v2.0.2_gpu \
-  /opt/bin/run_clair3.sh \
-    --bam_fn=${INPUT_DIR}/input.bam \
-    --ref_fn=${INPUT_DIR}/ref.fa \
-    --threads=${THREADS} \
-    --platform=ont \                       ## {ont,hifi,ilmn}
-    --model_path=/opt/models/${MODEL_NAME} \
-    --output=${OUTPUT_DIR} \
-    --use_gpu
+ -v ${INPUT_DIR}:${INPUT_DIR} \
+ -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
+ hkubal/clair3:v2.0.1_gpu \
+ /opt/bin/run_clair3.sh \
+ --bam_fn=${INPUT_DIR}/input.bam \
+ --ref_fn=${INPUT_DIR}/ref.fa \
+ --threads=${THREADS} \
+ --platform=ont \ ## {ont,hifi,ilmn}
+ --model_path=/opt/models/${MODEL_NAME} \
+ --output=${OUTPUT_DIR} \
+ --use_gpu
 ```
 
 **Notes**
 
 - Select specific GPUs with `--gpus '"device=0,1"'` (Docker) and `--device=cuda:0,1` (Clair3).
+- **AMD Instinct (ROCm):** build the ROCm GPU image from `Dockerfile.gpu` and run with `--device=/dev/kfd --device=/dev/dri --group-add=video` instead of `--gpus all`. See the [GPU Quick Start](docs/gpu_quick_start.md#option-4-amd-instinct-rocm-on-linux).
 - If the image does not work on your setup (unsupported driver/CUDA, no NVIDIA Container Toolkit, Apple Silicon, etc.), fall back to [Step-by-step (Option 4)](#option-4-step-by-step-conda).
 
 ### Option 2. Singularity
@@ -240,18 +238,18 @@ conda config --add channels defaults
 conda create -n singularity-env -c conda-forge singularity -y
 conda activate singularity-env
 
-singularity pull docker://hkubal/clair3:v2.0.2
+singularity pull docker://hkubal/clair3:v2.0.1
 
 singularity exec \
-  -B ${INPUT_DIR},${OUTPUT_DIR} \
-  clair3_v2.0.2.sif \
-  /opt/bin/run_clair3.sh \
-    --bam_fn=${INPUT_DIR}/input.bam \
-    --ref_fn=${INPUT_DIR}/ref.fa \
-    --threads=${THREADS} \
-    --platform=ont \                       ## {ont,hifi,ilmn}
-    --model_path=/opt/models/${MODEL_NAME} \
-    --output=${OUTPUT_DIR}
+ -B ${INPUT_DIR},${OUTPUT_DIR} \
+ clair3_v2.0.1.sif \
+ /opt/bin/run_clair3.sh \
+ --bam_fn=${INPUT_DIR}/input.bam \
+ --ref_fn=${INPUT_DIR}/ref.fa \
+ --threads=${THREADS} \
+ --platform=ont \ ## {ont,hifi,ilmn}
+ --model_path=/opt/models/${MODEL_NAME} \
+ --output=${OUTPUT_DIR}
 ```
 
 #### GPU (NVIDIA CUDA on Linux)
@@ -262,19 +260,19 @@ singularity exec \
 - Singularity (or Apptainer) with `--nv` support.
 
 ```bash
-singularity pull docker://hkubal/clair3:v2.0.2_gpu
+singularity pull docker://hkubal/clair3:v2.0.1_gpu
 
 singularity exec --nv --cleanenv --env TMPDIR=/tmp \
-  -B ${INPUT_DIR},${OUTPUT_DIR} \
-  clair3_v2.0.2_gpu.sif \
-  /opt/bin/run_clair3.sh \
-    --bam_fn=${INPUT_DIR}/input.bam \
-    --ref_fn=${INPUT_DIR}/ref.fa \
-    --threads=${THREADS} \
-    --platform=ont \                       ## {ont,hifi,ilmn}
-    --model_path=/opt/models/${MODEL_NAME} \
-    --output=${OUTPUT_DIR} \
-    --use_gpu
+ -B ${INPUT_DIR},${OUTPUT_DIR} \
+ clair3_v2.0.1_gpu.sif \
+ /opt/bin/run_clair3.sh \
+ --bam_fn=${INPUT_DIR}/input.bam \
+ --ref_fn=${INPUT_DIR}/ref.fa \
+ --threads=${THREADS} \
+ --platform=ont \ ## {ont,hifi,ilmn}
+ --model_path=/opt/models/${MODEL_NAME} \
+ --output=${OUTPUT_DIR} \
+ --use_gpu
 ```
 
 **Notes**
@@ -291,15 +289,15 @@ Clair3 is available on [Bioconda](https://bioconda.github.io/recipes/clair3/READ
 mamba create -n clair3 -c conda-forge -c bioconda -y clair3
 mamba activate clair3
 
-MODEL_NAME="[YOUR_MODEL_NAME]"         # e.g. r1041_e82_400bps_sup_v500
+MODEL_NAME="[YOUR_MODEL_NAME]" # e.g. r1041_e82_400bps_sup_v500
 
 run_clair3.sh \
-  --bam_fn=input.bam \
-  --ref_fn=ref.fa \
-  --threads=${THREADS} \
-  --platform=ont \                 ## {ont,hifi,ilmn}
-  --model_path=${CONDA_PREFIX}/bin/models/${MODEL_NAME} \
-  --output=${OUTPUT_DIR}
+ --bam_fn=input.bam \
+ --ref_fn=ref.fa \
+ --threads=${THREADS} \
+ --platform=ont \ ## {ont,hifi,ilmn}
+ --model_path=${CONDA_PREFIX}/bin/models/${MODEL_NAME} \
+ --output=${OUTPUT_DIR}
 ```
 
 > **Note.** The Bioconda package ships a CPU-only PyTorch build. For NVIDIA GPU or Apple Silicon, use [Step-by-step (Option 4)](#option-4-step-by-step-conda).
@@ -312,8 +310,8 @@ Install Mamba or Conda from [miniforge](https://github.com/conda-forge/miniforge
 
 ```bash
 mamba create -n clair3_v2 -c conda-forge -c bioconda -y \
-  python=3.11 samtools whatshap parallel \
-  zstd xz zlib bzip2 automake make gcc gxx curl pigz
+ python=3.11 samtools whatshap parallel \
+ zstd xz zlib bzip2 automake make gcc gxx curl pigz
 mamba activate clair3_v2
 pip install uv
 ```
@@ -325,6 +323,9 @@ Pick the right build for your system from the [PyTorch website](https://pytorch.
 ```bash
 # Example: NVIDIA CUDA 13.0
 uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
+
+# Or: AMD Instinct (ROCm) -- pick the rocmX.Y index matching your host ROCm (7.0 or 7.1)
+uv pip install torch torchvision --index-url https://download.pytorch.org/whl/rocm7.1
 
 # Or: CPU only
 uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
@@ -367,7 +368,7 @@ pypy3 -m pip install mpmath==1.2.1
 cd ${CLAIR3_PATH}
 mkdir -p models
 wget -r -np -nH --cut-dirs=2 -R "index.html*" -P ./models \
-  https://www.bio8.cs.hku.hk/clair3/clair3_models_pytorch/
+ https://www.bio8.cs.hku.hk/clair3/clair3_models_pytorch/
 ```
 
 Individual models can also be grabbed from [the model index](https://www.bio8.cs.hku.hk/clair3/clair3_models_pytorch/).
@@ -377,12 +378,12 @@ Individual models can also be grabbed from [the model index](https://www.bio8.cs
 ```bash
 MODEL_NAME=r1041_e82_400bps_sup_v500
 ${CLAIR3_PATH}/run_clair3.sh \
-  --bam_fn=input.bam \
-  --ref_fn=ref.fa \
-  --threads=${THREADS} \
-  --platform=ont \
-  --model_path=${CLAIR3_PATH}/models/${MODEL_NAME} \
-  --output=${OUTPUT_DIR}
+ --bam_fn=input.bam \
+ --ref_fn=ref.fa \
+ --threads=${THREADS} \
+ --platform=ont \
+ --model_path=${CLAIR3_PATH}/models/${MODEL_NAME} \
+ --output=${OUTPUT_DIR}
 ```
 
 > `python3 ${CLAIR3_PATH}/run_clair3.py` accepts the same arguments and can be used interchangeably.
@@ -406,12 +407,12 @@ Listed at <https://www.bio8.cs.hku.hk/clair3/clair3_models_pytorch/>.
 
 | Model | Platform | `--platform` | Training samples / Notes | Bioconda | Docker |
 | --- | --- | :-: | --- | :-: | :-: |
-| **`r1041_e82_400bps_hac_v600_with_mv`** *(latest)* | ONT R10.4.1 E8.2 (5 kHz), HAC | `ont` | HG001,2,5 (chr20 excluded) — **signal-aware**, use `--enable_dwell_time` | ✓ | ✓ |
-| **`r1041_e82_400bps_hac_v520_with_mv`** *(latest)* | ONT R10.4.1 E8.2 (5 kHz), HAC | `ont` | HG001,2,5 (chr20 excluded) — **signal-aware**, use `--enable_dwell_time` | ✓ | ✓ |
-| **`r1041_e82_400bps_sup_v520_with_mv`** *(latest)* | ONT R10.4.1 E8.2 (5 kHz), SUP | `ont` | HG001,2,5 (chr20 excluded) — **signal-aware**, use `--enable_dwell_time` | ✓ | ✓ |
-| `r1041_e82_400bps_sup_v430_bacteria_finetuned` | ONT R10.4.1 | `ont` | Fine-tuned on 12 [bacterial genomes](https://elifesciences.org/reviewed-preprints/98300) | ✓ | ✓ |
+| **`r1041_e82_400bps_hac_v600_with_mv`** *(latest)* | ONT R10.4.1 E8.2 (5 kHz), HAC | `ont` | HG001,2,5 (chr20 excluded) — **signal-aware**, use `--enable_dwell_time` | | |
+| **`r1041_e82_400bps_hac_v520_with_mv`** *(latest)* | ONT R10.4.1 E8.2 (5 kHz), HAC | `ont` | HG001,2,5 (chr20 excluded) — **signal-aware**, use `--enable_dwell_time` | | ✓ |
+| **`r1041_e82_400bps_sup_v520_with_mv`** *(latest)* | ONT R10.4.1 E8.2 (5 kHz), SUP | `ont` | HG001,2,5 (chr20 excluded) — **signal-aware**, use `--enable_dwell_time` | | ✓ |
+| `r1041_e82_400bps_sup_v430_bacteria_finetuned` | ONT R10.4.1 | `ont` | Fine-tuned on 12 [bacterial genomes](https://elifesciences.org/reviewed-preprints/98300) | | ✓ |
 | `r941_prom_sup_g5014` | ONT R9.4.1, Guppy5 SUP | `ont` | HG002,4,5; also usable on HAC reads ([benchmarks](docs/guppy5_20220113.md)) | ✓ | ✓ |
-| `r941_prom_hac_g360+g422` | ONT R9.4.1, Guppy3/4 HAC | `ont` | HG001,2,4,5 | ✓ | ✓ |
+| `r941_prom_hac_g360+g422` | ONT R9.4.1, Guppy3/4 HAC | `ont` | HG001,2,4,5 | | |
 | `hifi_revio` | PacBio HiFi Revio | `hifi` | HG002,4 | ✓ | ✓ |
 | `hifi_sequel2` | PacBio HiFi Sequel II | `hifi` | HG001,2,4,5 | ✓ | ✓ |
 | `ilmn` | Illumina | `ilmn` | HG001,2,4,5 | ✓ | ✓ |
@@ -422,19 +423,16 @@ Listed at <https://www.bio8.cs.hku.hk/clair3/clair3_models_pytorch/>.
 
 > ONT's models are fine-tuned to specific chemistries / basecallers and **typically outperform the HKU baselines** — we recommend using them for best results. Official PyTorch distributions from ONT are in progress; in the meantime, use the [converted Rerio models](#converted-rerio-models) below.
 
-The following ONT-trained models are bundled in **both** the Clair3 Docker image and the Bioconda package. Since v2.0.2 the full set below — including the Dorado v5.2.0 and v6.0.0 models — ships in both, re-packaged into a single archive:
+The following ONT-trained models are bundled with Clair3 Docker / Bioconda since v1.1.1:
 
 | Model | Chemistry | Dorado model | Bioconda | Docker |
 | --- | --- | --- | :-: | :-: |
-| `r1041_e82_400bps_hac_v600` *(latest)* | R10.4.1 E8.2 (5 kHz) | v6.0.0 HAC | ✓ | ✓ |
-| `r1041_e82_400bps_sup_v520` *(latest)* | R10.4.1 E8.2 (5 kHz) | v5.2.0 SUP | ✓ | ✓ |
-| `r1041_e82_400bps_hac_v520` | R10.4.1 E8.2 (5 kHz) | v5.2.0 HAC | ✓ | ✓ |
 | `r1041_e82_400bps_sup_v500` | R10.4.1 E8.2 (5 kHz) | v5.0.0 SUP | ✓ | ✓ |
-| `r1041_e82_400bps_hac_v500` | R10.4.1 E8.2 (5 kHz) | v5.0.0 HAC | ✓ | ✓ |
+| `r1041_e82_400bps_hac_v500` | R10.4.1 E8.2 (5 kHz) | v5.0.0 HAC | | ✓ |
 | `r1041_e82_400bps_sup_v410` | R10.4.1 E8.2 (4 kHz) | v4.1.0 SUP | ✓ | ✓ |
-| `r1041_e82_400bps_hac_v410` | R10.4.1 E8.2 (4 kHz) | v4.1.0 HAC | ✓ | ✓ |
+| `r1041_e82_400bps_hac_v410` | R10.4.1 E8.2 (4 kHz) | v4.1.0 HAC | | ✓ |
 
-> Only recent R10.4.1 E8.2 models are bundled here. For other chemistries or basecaller versions, download from the [Converted Rerio models](#converted-rerio-models) catalog below.
+> **ONT has released newer Dorado v5.2.0 models** (`r1041_e82_400bps_sup_v520` / `hac_v520`). They are not yet bundled in Docker / Bioconda — download them from the [Converted Rerio models](#converted-rerio-models) section below.
 
 ### Converted Rerio models
 
@@ -449,8 +447,8 @@ The full ONT [Rerio](https://github.com/nanoporetech/rerio) catalog converted to
 | `r1041_e82_400bps_hac_v500` | R10.4.1 E8.2 (5 kHz) | v5.0.0 HAC |
 | `r1041_e82_400bps_sup_v430` | R10.4.1 E8.2 (5 kHz) | v4.3.0 SUP |
 | `r1041_e82_400bps_hac_v430` | R10.4.1 E8.2 (5 kHz) | v4.3.0 HAC |
-| `r1041_e82_400bps_sup_v410` | R10.4.1 E8.2 (4 kHz) | v4.1.0 SUP |
-| `r1041_e82_400bps_hac_v410` | R10.4.1 E8.2 (4 kHz) | v4.1.0 HAC |
+| `r1041_e82_400bps_sup_v410` | R10.4.1 E8.2 (5 kHz) | v4.1.0 SUP |
+| `r1041_e82_400bps_hac_v410` | R10.4.1 E8.2 (5 kHz) | v4.1.0 HAC |
 
 For other chemistries and basecaller versions (R10.4.1 E8.2 260 bps, R10.4 E8.1, earlier Guppy `g6xx` / `g5015`, v4.0.0 / v4.2.0), browse the full [model directory](https://www.bio8.cs.hku.hk/clair3/clair3_models_rerio_pytorch/) and pick the one matching your chemistry and basecaller (Dorado / Guppy) version.
 
@@ -473,13 +471,13 @@ For other chemistries and basecaller versions (R10.4.1 E8.2 260 bps, R10.4 E8.1,
 
 ```bash
 ./run_clair3.sh \
-  --bam_fn=${BAM} \
-  --ref_fn=${REF} \
-  --threads=${THREADS} \
-  --platform=ont \                 ## {ont,hifi,ilmn}
-  --model_path=${MODEL_PREFIX} \
-  --output=${OUTPUT_DIR} \
-  --include_all_ctgs               ## required for non-human species
+ --bam_fn=${BAM} \
+ --ref_fn=${REF} \
+ --threads=${THREADS} \
+ --platform=ont \ ## {ont,hifi,ilmn}
+ --model_path=${MODEL_PREFIX} \
+ --output=${OUTPUT_DIR} \
+ --include_all_ctgs ## required for non-human species
 ```
 
 Outputs:
@@ -499,88 +497,88 @@ By default, variants are called on `chr{1..22,X,Y}` and `{1..22,X,Y}`. Override 
 **Required**
 
 ```
--b, --bam_fn=FILE         Indexed BAM input.
--f, --ref_fn=FILE         Indexed FASTA reference.
--m, --model_path=STR      Folder containing pileup.pt and full_alignment.pt.
--t, --threads=INT         Max threads. Each chunk uses 4; ceil(threads/4)*3 chunks run in parallel.
--p, --platform=STR        {ont,hifi,ilmn}
--o, --output=PATH         VCF/GVCF output directory.
+-b, --bam_fn=FILE Indexed BAM input.
+-f, --ref_fn=FILE Indexed FASTA reference.
+-m, --model_path=STR Folder containing pileup.pt and full_alignment.pt.
+-t, --threads=INT Max threads. Each chunk uses 4; ceil(threads/4)*3 chunks run in parallel.
+-p, --platform=STR {ont,hifi,ilmn}
+-o, --output=PATH VCF/GVCF output directory.
 ```
 
 **Common options**
 
 ```
-    --bed_fn=FILE                     Call variants only in these BED regions.
-    --vcf_fn=FILE                     Candidate sites VCF; only call at these sites.
-    --ctg_name=STR                    Sequence(s) to process.
-    --sample_name=STR                 Sample name in the output VCF.
-    --qual=INT                        Variants with QUAL > $qual are PASS, else LowQual.
-    --chunk_size=INT                  Chunk size for parallel processing. Default: 5000000.
-    --pileup_only                     Pileup model only. Default: disable.
-    --print_ref_calls                 Include 0/0 calls in the VCF. Default: disable.
-    --include_all_ctgs                Call on all contigs. Default: chr{1..22,X,Y}.
-    --gvcf                            Emit GVCF. Default: disable.
-    --remove_intermediate_dir         Drop intermediate files when no longer needed.
+ --bed_fn=FILE Call variants only in these BED regions.
+ --vcf_fn=FILE Candidate sites VCF; only call at these sites.
+ --ctg_name=STR Sequence(s) to process.
+ --sample_name=STR Sample name in the output VCF.
+ --qual=INT Variants with QUAL > $qual are PASS, else LowQual.
+ --chunk_size=INT Chunk size for parallel processing. Default: 5000000.
+ --pileup_only Pileup model only. Default: disable.
+ --print_ref_calls Include 0/0 calls in the VCF. Default: disable.
+ --include_all_ctgs Call on all contigs. Default: chr{1..22,X,Y}.
+ --gvcf Emit GVCF. Default: disable.
+ --remove_intermediate_dir Drop intermediate files when no longer needed.
 ```
 
 **GPU / signal-aware**
 
 ```
-    --use_gpu                         Enable GPU-accelerated calling.
-    --device=STR                      GPU device(s), e.g. 'cuda:0' or 'cuda:0,1'. Default: all visible GPUs.
-    --enable_dwell_time               Signal-aware calling via Dorado mv tags (ONT only; C impl required).
+ --use_gpu Enable GPU-accelerated calling.
+ --device=STR GPU device(s), e.g. 'cuda:0' or 'cuda:0,1'. Default: all visible GPUs.
+ --enable_dwell_time Signal-aware calling via Dorado mv tags (ONT only; C impl required).
 ```
 
 **Phasing**
 
 ```
-    --use_whatshap_for_intermediate_phasing      Default: enable.
-    --use_longphase_for_intermediate_phasing     Default: disable.
-    --use_whatshap_for_final_output_phasing      Default: disable.
-    --use_longphase_for_final_output_phasing     Default: disable.
-    --use_whatshap_for_final_output_haplotagging Default: disable.
-    --enable_phasing                             Alias of --use_whatshap_for_final_output_phasing (legacy).
-    --longphase_for_phasing                      Alias of --use_longphase_for_intermediate_phasing (legacy).
+ --use_whatshap_for_intermediate_phasing Default: enable.
+ --use_longphase_for_intermediate_phasing Default: disable.
+ --use_whatshap_for_final_output_phasing Default: disable.
+ --use_longphase_for_final_output_phasing Default: disable.
+ --use_whatshap_for_final_output_haplotagging Default: disable.
+ --enable_phasing Alias of --use_whatshap_for_final_output_phasing (legacy).
+ --longphase_for_phasing Alias of --use_longphase_for_intermediate_phasing (legacy).
 ```
 
 **External binaries**
 
 ```
-    --samtools=STR     samtools >= 1.10
-    --python=STR       python3 >= 3.6
-    --pypy=STR         pypy3 >= 3.6
-    --parallel=STR     parallel >= 20191122
-    --whatshap=STR     whatshap >= 1.0
-    --longphase=STR    longphase >= 1.0
+ --samtools=STR samtools >= 1.10
+ --python=STR python3 >= 3.6
+ --pypy=STR pypy3 >= 3.6
+ --parallel=STR parallel >= 20191122
+ --whatshap=STR whatshap >= 1.0
+ --longphase=STR longphase >= 1.0
 ```
 
 **Experimental / advanced**
 
 ```
-    --snp_min_af=FLOAT        Min SNP AF. Default: ont/hifi/ilmn = 0.08.
-    --indel_min_af=FLOAT      Min indel AF. Default: ont=0.15, hifi/ilmn=0.08.
-    --var_pct_full=FLOAT      Pct of low-quality 0/1 and 1/1 pileup calls rerun in full-alignment. Default: 0.3.
-    --ref_pct_full=FLOAT      Pct of low-quality 0/0 pileup calls rerun in full-alignment. Default: 0.3 (ilmn/hifi), 0.1 (ont).
-    --var_pct_phasing=FLOAT   Pct of high-quality 0/1 pileup variants used for WhatsHap phasing. Default: 0.8 (ont guppy5), 0.7 (others).
-    --pileup_model_prefix=STR Pileup model prefix. Default: pileup.
-    --fa_model_prefix=STR     Full-alignment model prefix. Default: full_alignment.
-    --min_mq=INT              Filter reads with MAPQ < $min_mq. Default: 5.
-    --min_coverage=INT        Min coverage to call a variant. Default: 2.
-    --min_contig_size=INT     Skip contigs smaller than $min_contig_size. Default: 0.
-    --fast_mode               Skip candidates with AF <= 0.15.
-    --haploid_precise         Haploid: only 1/1 is a variant.
-    --haploid_sensitive       Haploid: 0/1 and 1/1 are variants.
-    --no_phasing_for_fa       Skip WhatsHap phasing in full-alignment calling.
-    --call_snp_only           Skip indels.
-    --enable_long_indel       Call indels > 50 bp.
-    --keep_iupac_bases        Keep IUPAC bases (default: convert to N).
-    --base_err=FLOAT          Estimated base error rate for GVCF. Default: 0.001.
-    --gq_bin_size=INT         GQ bin size for non-variant merging in GVCF. Default: 5.
-    --enable_variant_calling_at_sequence_head_and_tail
-                              Call in the first/last 16 bp of a sequence (amplicon-friendly).
-    --output_all_contigs_in_gvcf_header
-                              List all contigs in the GVCF header.
-    --disable_c_impl          Disable C implementation for tensor creation (default: enable).
+ --snp_min_af=FLOAT Min SNP AF. Default: ont/hifi/ilmn = 0.08.
+ --indel_min_af=FLOAT Min indel AF. Default: ont=0.15, hifi/ilmn=0.08.
+ --var_pct_full=FLOAT Pct of low-quality 0/1 and 1/1 pileup calls rerun in full-alignment. Default: 0.3.
+ --ref_pct_full=FLOAT Pct of low-quality 0/0 pileup calls rerun in full-alignment. Default: 0.3 (ilmn/hifi), 0.1 (ont).
+ --var_pct_phasing=FLOAT Pct of high-quality 0/1 pileup variants used for WhatsHap phasing. Default: 0.8 (ont guppy5), 0.7 (others).
+ --pileup_model_prefix=STR Pileup model prefix. Default: pileup.
+ --fa_model_prefix=STR Full-alignment model prefix. Default: full_alignment.
+ --min_mq=INT Filter reads with MAPQ < $min_mq. Default: 5.
+ --min_coverage=INT Min coverage to call a variant. Default: 2.
+ --min_contig_size=INT Skip contigs smaller than $min_contig_size. Default: 0.
+ --fast_mode Skip candidates with AF <= 0.15.
+ --haploid_precise Haploid: only 1/1 is a variant.
+ --haploid_sensitive Haploid: 0/1 and 1/1 are variants.
+ --no_phasing_for_fa Skip WhatsHap phasing in full-alignment calling.
+ --call_snp_only Skip indels.
+ --enable_long_indel Call indels > 50 bp.
+ --keep_iupac_bases Keep IUPAC bases (default: convert to N).
+ --base_err=FLOAT Estimated base error rate for GVCF. Default: 0.001.
+ --gq_bin_size=INT GQ bin size for non-variant merging in GVCF. Default: 5.
+ --enable_variant_calling_at_sequence_head_and_tail
+ Call in the first/last 16 bp of a sequence (amplicon-friendly).
+ --output_all_contigs_in_gvcf_header
+ List all contigs in the GVCF header.
+ --disable_c_impl Disable C implementation for tensor creation (default: enable).
 ```
 
 ### Examples
@@ -588,39 +586,39 @@ By default, variants are called on `chr{1..22,X,Y}` and `{1..22,X,Y}`. Override 
 #### Call variants on selected chromosomes
 
 ```bash
-CONTIGS_LIST="[YOUR_CONTIGS_LIST]"     # e.g "chr21" or "chr21,chr22"
+CONTIGS_LIST="[YOUR_CONTIGS_LIST]" # e.g "chr21" or "chr21,chr22"
 
 docker run -it \
-  -v ${INPUT_DIR}:${INPUT_DIR} \
-  -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
-  hkubal/clair3:v2.0.2 \
-  /opt/bin/run_clair3.sh \
-    --bam_fn=${INPUT_DIR}/input.bam \
-    --ref_fn=${INPUT_DIR}/ref.fa \
-    --threads=${THREADS} \
-    --platform=ont \
-    --model_path=/opt/models/${MODEL_NAME} \
-    --output=${OUTPUT_DIR} \
-    --ctg_name=${CONTIGS_LIST}
+ -v ${INPUT_DIR}:${INPUT_DIR} \
+ -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
+ hkubal/clair3:v2.0.1 \
+ /opt/bin/run_clair3.sh \
+ --bam_fn=${INPUT_DIR}/input.bam \
+ --ref_fn=${INPUT_DIR}/ref.fa \
+ --threads=${THREADS} \
+ --platform=ont \
+ --model_path=/opt/models/${MODEL_NAME} \
+ --output=${OUTPUT_DIR} \
+ --ctg_name=${CONTIGS_LIST}
 ```
 
 #### Call variants at known sites
 
 ```bash
-KNOWN_VARIANTS_VCF="[YOUR_VCF_PATH]"   # e.g. /home/user1/known_variants.vcf.gz
+KNOWN_VARIANTS_VCF="[YOUR_VCF_PATH]" # e.g. /home/user1/known_variants.vcf.gz
 
 docker run -it \
-  -v ${INPUT_DIR}:${INPUT_DIR} \
-  -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
-  hkubal/clair3:v2.0.2 \
-  /opt/bin/run_clair3.sh \
-    --bam_fn=${INPUT_DIR}/input.bam \
-    --ref_fn=${INPUT_DIR}/ref.fa \
-    --threads=${THREADS} \
-    --platform=ont \
-    --model_path=/opt/models/${MODEL_NAME} \
-    --output=${OUTPUT_DIR} \
-    --vcf_fn=${KNOWN_VARIANTS_VCF}
+ -v ${INPUT_DIR}:${INPUT_DIR} \
+ -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
+ hkubal/clair3:v2.0.1 \
+ /opt/bin/run_clair3.sh \
+ --bam_fn=${INPUT_DIR}/input.bam \
+ --ref_fn=${INPUT_DIR}/ref.fa \
+ --threads=${THREADS} \
+ --platform=ont \
+ --model_path=/opt/models/${MODEL_NAME} \
+ --output=${OUTPUT_DIR} \
+ --vcf_fn=${KNOWN_VARIANTS_VCF}
 ```
 
 #### Call variants in BED regions
@@ -631,40 +629,40 @@ docker run -it \
 # Build a BED (0-based, "ctg start end") if needed
 echo -e "${CONTIGS}\t${START_POS}\t${END_POS}" > /home/user1/tmp.bed
 
-BED_FILE_PATH="[YOUR_BED_FILE]"        # e.g. /home/user1/tmp.bed
+BED_FILE_PATH="[YOUR_BED_FILE]" # e.g. /home/user1/tmp.bed
 
 docker run -it \
-  -v ${INPUT_DIR}:${INPUT_DIR} \
-  -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
-  hkubal/clair3:v2.0.2 \
-  /opt/bin/run_clair3.sh \
-    --bam_fn=${INPUT_DIR}/input.bam \
-    --ref_fn=${INPUT_DIR}/ref.fa \
-    --threads=${THREADS} \
-    --platform=ont \
-    --model_path=/opt/models/${MODEL_NAME} \
-    --output=${OUTPUT_DIR} \
-    --bed_fn=${BED_FILE_PATH}
+ -v ${INPUT_DIR}:${INPUT_DIR} \
+ -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
+ hkubal/clair3:v2.0.1 \
+ /opt/bin/run_clair3.sh \
+ --bam_fn=${INPUT_DIR}/input.bam \
+ --ref_fn=${INPUT_DIR}/ref.fa \
+ --threads=${THREADS} \
+ --platform=ont \
+ --model_path=/opt/models/${MODEL_NAME} \
+ --output=${OUTPUT_DIR} \
+ --bed_fn=${BED_FILE_PATH}
 ```
 
 #### Call variants in non-diploid organisms (haploid)
 
 ```bash
 docker run -it \
-  -v ${INPUT_DIR}:${INPUT_DIR} \
-  -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
-  hkubal/clair3:v2.0.2 \
-  /opt/bin/run_clair3.sh \
-    --bam_fn=${INPUT_DIR}/input.bam \
-    --ref_fn=${INPUT_DIR}/ref.fa \
-    --threads=${THREADS} \
-    --platform=ont \
-    --model_path=/opt/models/${MODEL_NAME} \
-    --output=${OUTPUT_DIR} \
-    --no_phasing_for_fa \                      ## disable FA phasing
-    --include_all_ctgs \                       ## call on all contigs
-    --haploid_precise \                        ## or --haploid_sensitive
-    --enable_variant_calling_at_sequence_head_and_tail
+ -v ${INPUT_DIR}:${INPUT_DIR} \
+ -v ${OUTPUT_DIR}:${OUTPUT_DIR} \
+ hkubal/clair3:v2.0.1 \
+ /opt/bin/run_clair3.sh \
+ --bam_fn=${INPUT_DIR}/input.bam \
+ --ref_fn=${INPUT_DIR}/ref.fa \
+ --threads=${THREADS} \
+ --platform=ont \
+ --model_path=/opt/models/${MODEL_NAME} \
+ --output=${OUTPUT_DIR} \
+ --no_phasing_for_fa \ ## disable FA phasing
+ --include_all_ctgs \ ## call on all contigs
+ --haploid_precise \ ## or --haploid_sensitive
+ --enable_variant_calling_at_sequence_head_and_tail
 ```
 
 ---
@@ -677,13 +675,13 @@ Clair3 v2.0 introduces **signal-aware variant calling** for Oxford Nanopore data
 
 ```bash
 ./run_clair3.sh \
-  --bam_fn=input.bam \
-  --ref_fn=ref.fa \
-  --threads=8 \
-  --platform=ont \
-  --model_path=${MODEL_PATH} \
-  --output=${OUTPUT_DIR} \
-  --enable_dwell_time
+ --bam_fn=input.bam \
+ --ref_fn=ref.fa \
+ --threads=8 \
+ --platform=ont \
+ --model_path=${MODEL_PATH} \
+ --output=${OUTPUT_DIR} \
+ --enable_dwell_time
 ```
 
 **Requirements**
@@ -698,8 +696,8 @@ See [Dwelling Time Feature](docs/dwelling_time.md) (full guide incl. training) a
 
 - Use `--enable_variant_calling_at_sequence_head_and_tail`.
 - If coverage is excessively high: set `--var_pct_full=1` and `--ref_pct_full=1`.
-  - Human: also set `--var_pct_phasing=1`.
-  - Non-human: add `--no_phasing_for_fa`.
+ - Human: also set `--var_pct_phasing=1`.
+ - Non-human: add `--no_phasing_for_fa`.
 - Context: discussions [#160](https://github.com/HKU-BAL/Clair3/issues/160#issuecomment-1396743261), [#240](https://github.com/HKU-BAL/Clair3/issues/240).
 
 ### Postprocessing scripts
@@ -715,11 +713,11 @@ Two INFO tags are added: `SVBASEDHET` and `ORG_CLAIR3_SCORE` (original QUAL). Th
 
 ```bash
 pypy3 ${CLAIR3_PATH}/clair3.py SwitchZygosityBasedOnSVCalls \
-  --bam_fn input.bam \
-  --clair3_vcf_input clair3_input.vcf.gz \
-  --sv_vcf_input sniffle2.vcf.gz \
-  --vcf_output output.vcf \
-  --threads 8
+ --bam_fn input.bam \
+ --clair3_vcf_input clair3_input.vcf.gz \
+ --sv_vcf_input sniffle2.vcf.gz \
+ --vcf_output output.vcf \
+ --threads 8
 ```
 
 ---
@@ -800,4 +798,4 @@ GVCF output is **GATK-compatible** and passes GATK `ValidateVariants`. Clair3 us
 | --- | --- | --- |
 | Symphonizing pileup and full-alignment for deep learning-based long-read variant calling | [Nature Computational Science](https://rdcu.be/c1TPa) · [bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2021.12.29.474431v2) | Original Clair3 |
 | Accelerated long-read variant calling with Clair3 for whole-genome sequencing | [Bioinformatics, 2026](https://doi.org/10.1093/bioinformatics/btag181) | GPU-accelerated Clair3 |
-| Leveraging ONT move table values for signal aware variant calling | [Bioinformatics, 2026](https://doi.org/10.1093/bioinformatics/btag376) | ONT `mv`-tag (move-table) signal-aware tuning |
+| Leveraging ONT move table values for signal aware variant calling | [bioRxiv preprint, 2026](https://www.biorxiv.org/content/10.64898/2026.02.13.705285v1) | ONT `mv`-tag (move-table) signal-aware tuning |

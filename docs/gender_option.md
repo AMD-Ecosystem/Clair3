@@ -52,7 +52,7 @@ the PAR exemption will silently not apply.
 - These two haploid flags are unchanged: they are **global** and apply to all contigs.
 - If a global haploid flag is set, it **takes precedence** over `--gender`.
 - `--gender male` is a convenience: it automatically applies haploid (precise) mode to the
-  sex chromosomes only, with no extra flags required.
+ sex chromosomes only, with no extra flags required.
 
 ---
 
@@ -75,7 +75,7 @@ the PAR exemption will silently not apply.
 
 | Condition | SNP Recall | SNP Precision | SNP F1 |
 |---|---|---|---|
-| `--gender unknown`  | 0.967 | 0.810 | 0.882 |
+| `--gender unknown` | 0.967 | 0.810 | 0.882 |
 | `--gender male` | 0.935 | 0.979 | 0.973 |
 | `--gender male --par_regions_bed` | 0.967 | 0.978 | 0.973 |
 

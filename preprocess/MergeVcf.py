@@ -56,40 +56,6 @@ def MarkLowQual(row, quality_score_for_pass, qual):
         return '\t'.join(row)
     return row
 
-
-# Sex chromosomes, in both 'chr'-prefixed and bare naming conventions.
-SEX_CHROMOSOMES = {"chrX", "X", "chrY", "Y"}
-
-
-def haploid_mode_decider(args):
-    """Build a per-record decider: (contig, pos) -> 'precise' | 'sensitive' | None.
-
-    Precedence: global --haploid_precise / --haploid_sensitive first (unchanged
-    behavior), then --gender male which applies 'precise' to sex chromosomes only,
-    except inside PAR regions (where the site stays diploid).
-    """
-    global_precise = args.haploid_precise
-    global_sensitive = args.haploid_sensitive
-    gender = getattr(args, 'gender', 'unknown')
-    par_bed = getattr(args, 'par_regions_bed', 'EMPTY')
-    if par_bed in (None, '', 'EMPTY'):
-        par_bed = None
-    par_tree = bed_tree_from(par_bed)
-
-    def decide(contig, pos):
-        if global_precise:
-            return 'precise'
-        if global_sensitive:
-            return 'sensitive'
-        if gender == 'male' and contig in SEX_CHROMOSOMES:
-            if par_tree and is_region_in(par_tree, contig, pos):
-                return None  # PAR region: keep diploid
-            return 'precise'
-        return None
-
-    return decide
-
-
 def MergeVcf_illumina(args):
     # region vcf merge for illumina, as read realignment will make candidate varaints shift and missing.
     bed_fn_prefix = args.bed_fn_prefix
@@ -111,12 +77,12 @@ def MergeVcf_illumina(args):
                 with open(os.path.join(bed_fn_prefix, file)) as f:
                     output_file.write(f.read())
 
-    # Per-record haploid decision: global flags first, then --gender male on sex chromosomes (outside PAR).
-    decide = haploid_mode_decider(args)
+    is_haploid_precise_mode_enabled = args.haploid_precise
+    is_haploid_sensitive_mode_enabled = args.haploid_sensitive
     print_ref = args.print_ref_calls
 
     tree = bed_tree_from(bed_file_path=bed_fn, padding=param.no_of_positions, contig_name=contig_name)
-    unzip_process = subprocess_popen(shlex.split("pigz -fdc -p 2 %s" % (pileup_vcf_fn)))
+    unzip_process = subprocess_popen(shlex.split("gzip -fdc %s" % (pileup_vcf_fn)))
     output_dict = {}
     header = []
     pileup_count = 0
@@ -133,10 +99,9 @@ def MergeVcf_illumina(args):
         pass_bed = is_region_in(tree, ctg_name, pos)
         ref_base, alt_base = columns[3], columns[4]
         is_reference = (alt_base == "." or ref_base == alt_base)
-        mode = decide(ctg_name, pos)
-        if mode == 'precise':
+        if is_haploid_precise_mode_enabled:
             row = update_haploid_precise_genotype(columns)
-        elif mode == 'sensitive':
+        if is_haploid_sensitive_mode_enabled:
             row = update_haploid_sensitive_genotype(columns)
 
         if not pass_bed:
@@ -151,7 +116,7 @@ def MergeVcf_illumina(args):
     unzip_process.stdout.close()
     unzip_process.wait()
 
-    realigned_vcf_unzip_process = subprocess_popen(shlex.split("pigz -fdc -p 2 %s" % (full_alignment_vcf_fn)))
+    realigned_vcf_unzip_process = subprocess_popen(shlex.split("gzip -fdc %s" % (full_alignment_vcf_fn)))
     realiged_read_num = 0
     for row in realigned_vcf_unzip_process.stdout:
         if row[0] == '#':
@@ -166,10 +131,9 @@ def MergeVcf_illumina(args):
         ref_base, alt_base = columns[3], columns[4]
         is_reference = (alt_base == "." or ref_base == alt_base)
 
-        mode = decide(ctg_name, pos)
-        if mode == 'precise':
+        if is_haploid_precise_mode_enabled:
             row = update_haploid_precise_genotype(columns)
-        elif mode == 'sensitive':
+        if is_haploid_sensitive_mode_enabled:
             row = update_haploid_sensitive_genotype(columns)
 
         if is_region_in(tree, ctg_name, pos):
@@ -202,10 +166,10 @@ def MergeVcf(args):
     pileup_vcf_fn = args.pileup_vcf_fn  # true vcf var
     contig_name = args.ctgName
     QUAL = args.qual
-    # Per-record haploid decision: global flags first, then --gender male on sex chromosomes (outside PAR).
-    decide = haploid_mode_decider(args)
+    is_haploid_precise_mode_enabled = args.haploid_precise
+    is_haploid_sensitive_mode_enabled = args.haploid_sensitive
     print_ref = args.print_ref_calls
-    full_alignment_vcf_unzip_process = subprocess_popen(shlex.split("pigz -fdc -p 2 %s" % (full_alignment_vcf_fn)))
+    full_alignment_vcf_unzip_process = subprocess_popen(shlex.split("gzip -fdc %s" % (full_alignment_vcf_fn)))
 
     full_alignment_output = []
     full_alignment_output_set = set()
@@ -226,10 +190,9 @@ def MergeVcf(args):
 
         full_alignment_output_set.add((ctg_name, pos))
 
-        mode = decide(ctg_name, pos)
-        if mode == 'precise':
+        if is_haploid_precise_mode_enabled:
             row = update_haploid_precise_genotype(columns)
-        elif mode == 'sensitive':
+        if is_haploid_sensitive_mode_enabled:
             row = update_haploid_sensitive_genotype(columns)
 
         if not is_reference:
@@ -242,7 +205,7 @@ def MergeVcf(args):
     full_alignment_vcf_unzip_process.stdout.close()
     full_alignment_vcf_unzip_process.wait()
 
-    pileup_vcf_unzip_process = subprocess_popen(shlex.split("pigz -fdc -p 2 %s" % (pileup_vcf_fn)))
+    pileup_vcf_unzip_process = subprocess_popen(shlex.split("gzip -fdc %s" % (pileup_vcf_fn)))
 
     output_file = open(output_fn, 'w')
     output_file.write(''.join(header))
@@ -265,10 +228,9 @@ def MergeVcf(args):
             if (ctg_name, pos) in full_alignment_output_set:
                 continue
 
-            mode = decide(ctg_name, pos)
-            if mode == 'precise':
+            if is_haploid_precise_mode_enabled:
                 row = update_haploid_precise_genotype(columns)
-            elif mode == 'sensitive':
+            if is_haploid_sensitive_mode_enabled:
                 row = update_haploid_sensitive_genotype(columns)
 
             if not is_reference:
@@ -372,16 +334,6 @@ def main():
 
     parser.add_argument('--haploid_sensitive', type=str2bool, default=False,
                         help="EXPERIMENTAL: Enable haploid calling mode. 0/1 and 1/1 are considered as a variant")
-
-    # Gender-aware calling (issue #66). 'male' applies haploid mode to chrX/chrY only.
-    parser.add_argument('--gender', type=str, default='unknown',
-                        choices=['unknown', 'male', 'female'],
-                        help="Sample gender. 'male' applies haploid mode to chrX/chrY. default: unknown")
-
-    # Optional pseudo-autosomal region (PAR) BED; within these regions on chrX/chrY,
-    # haploid mode is NOT applied. Only meaningful with --gender male.
-    parser.add_argument('--par_regions_bed', type=str, default='EMPTY',
-                        help="BED of pseudo-autosomal regions (PAR). default: EMPTY (disabled)")
 
     args = parser.parse_args()
 

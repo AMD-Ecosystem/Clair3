@@ -532,8 +532,7 @@ size_t min_mq, size_t min_bq, size_t matrix_depth, size_t max_indel_length, bool
         }
     }
 
-    int sam_ret = 0;
-    while ((sam_ret = sam_itr_next(hts_file, iter, alignment)) >= 0)
+    while (sam_itr_next(hts_file, iter, alignment) >= 0)
     {
         int flag = alignment->core.flag;
 
@@ -772,11 +771,6 @@ size_t min_mq, size_t min_bq, size_t matrix_depth, size_t max_indel_length, bool
         kv_push(Read, read_array, read);
         if (signal_lengths != NULL)
             free(signal_lengths);
-    }
-    if (sam_ret < -1) {
-        // Read/decode error (not EOF, which is -1): propagate as a hard failure.
-        fprintf(stderr, "[ERROR] Failed to read alignment record (BAM/CRAM decode error).\n");
-        exit(1);
     }
 
     // allocate memory of the input matrix of all candidates
